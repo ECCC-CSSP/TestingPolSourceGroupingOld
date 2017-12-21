@@ -1,0 +1,22 @@
+Sub SetLinks()
+    
+    Dim I As Integer
+    Dim J As Integer
+    Dim Val As String
+    Dim Val2 As String
+    
+    For I = 2 To 1000
+        Val = Cells(I, 3).Value
+        Cells(I, 3).Select
+        If Val <> "" Then
+            For J = 2 To 1000
+                Val2 = Cells(J, 2).Value
+                If Val = Val2 Then
+                    ActiveSheet.Hyperlinks.Add Anchor:=Selection, Address:="", SubAddress:="B" & J, TextToDisplay:=Val
+                    Exit For
+                End If
+            Next
+        End If
+    Next
+
+End Sub
