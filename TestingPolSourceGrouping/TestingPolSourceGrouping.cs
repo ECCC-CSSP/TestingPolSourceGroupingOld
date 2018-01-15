@@ -123,6 +123,7 @@ namespace TestingPolSourceGrouping
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "\t" + groupChoiceChildLevel.EN);
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Init\t" + (groupChoiceChildLevel.InitEN + " ").Trim());
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Points\t" + (groupChoiceChildLevel.Points + " ").Trim());
+                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (groupChoiceChildLevel.Hide + " ").Trim());
                     if (groupChoiceChildLevel.ReportEN.Length > 0)
                     {
                         sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Report\t" + groupChoiceChildLevel.ReportEN);
@@ -159,6 +160,7 @@ namespace TestingPolSourceGrouping
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "\t" + groupChoiceChildLevel.FR);
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Init\t" + (groupChoiceChildLevel.InitFR + " ").Trim());
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Points\t" + (groupChoiceChildLevel.Points + " ").Trim());
+                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (groupChoiceChildLevel.Hide + " ").Trim());
                     if (groupChoiceChildLevel.ReportFR.Length > 0)
                     {
                         sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Report\t" + groupChoiceChildLevel.ReportFR);
@@ -462,7 +464,7 @@ namespace TestingPolSourceGrouping
 
 
             List<string> FieldNameList = new List<string>();
-            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR", "Points", "Comments" };
+            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "Hide", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR", "Points", "Comments" };
             for (int j = 0; j < reader.FieldCount; j++)
             {
                 if (reader.GetName(j) != FieldNameList[j])
@@ -479,6 +481,7 @@ namespace TestingPolSourceGrouping
             string Group = "";
             string Choice = "";
             string Child = "";
+            string Hide = "";
             string EN = "";
             string InitEN = "";
             string DescEN = "";
@@ -489,6 +492,8 @@ namespace TestingPolSourceGrouping
             string DescFR = "";
             string ReportFR = "";
             string TextFR = "";
+            string Points = "";
+            string Comments = "";
 
             int CountRead = 0;
             while (reader.Read())
@@ -505,6 +510,7 @@ namespace TestingPolSourceGrouping
                     Group = "";
                     Choice = "";
                     Child = "";
+                    Hide = "";
                     EN = "";
                     InitEN = "";
                     DescEN = "";
@@ -515,6 +521,8 @@ namespace TestingPolSourceGrouping
                     DescFR = "";
                     ReportFR = "";
                     TextFR = "";
+                    Points = "";
+                    Comments = "";
                     continue;
                 }
                 else
@@ -522,16 +530,19 @@ namespace TestingPolSourceGrouping
                     CSSPID = reader.GetValue(0).ToString();
                     Group = reader.GetValue(1).ToString();
                     Child = reader.GetValue(2).ToString();
-                    EN = reader.GetValue(3).ToString();
-                    InitEN = reader.GetValue(4).ToString();
-                    DescEN = reader.GetValue(5).ToString();
-                    ReportEN = reader.GetValue(6).ToString();
-                    TextEN = reader.GetValue(7).ToString();
-                    FR = reader.GetValue(8).ToString();
-                    InitFR = reader.GetValue(9).ToString();
-                    DescFR = reader.GetValue(10).ToString();
-                    ReportFR = reader.GetValue(11).ToString();
-                    TextFR = reader.GetValue(12).ToString();
+                    Hide = reader.GetValue(3).ToString();
+                    EN = reader.GetValue(4).ToString();
+                    InitEN = reader.GetValue(5).ToString();
+                    DescEN = reader.GetValue(6).ToString();
+                    ReportEN = reader.GetValue(7).ToString();
+                    TextEN = reader.GetValue(8).ToString();
+                    FR = reader.GetValue(9).ToString();
+                    InitFR = reader.GetValue(10).ToString();
+                    DescFR = reader.GetValue(11).ToString();
+                    ReportFR = reader.GetValue(12).ToString();
+                    TextFR = reader.GetValue(13).ToString();
+                    Points = reader.GetValue(14).ToString();
+                    Comments = reader.GetValue(15).ToString();
                 }
                 groupChoiceChildLevelStraitList.Add(new GroupChoiceChildLevel()
                 {
@@ -539,6 +550,7 @@ namespace TestingPolSourceGrouping
                     Group = Group,
                     Choice = Choice,
                     Child = Child,
+                    Hide = Hide,
                     EN = EN,
                     InitEN = InitEN,
                     DescEN = DescEN,
@@ -549,6 +561,8 @@ namespace TestingPolSourceGrouping
                     DescFR = DescFR,
                     ReportFR = ReportFR,
                     TextFR = TextFR,
+                    Points = Points,
+                    Comments = Comments,
                 });
             }
             reader.Close();
@@ -846,14 +860,14 @@ namespace TestingPolSourceGrouping
                 return false;
             }
 
-            if (reader.FieldCount != 15)
+            if (reader.FieldCount != 16)
             {
                 richTextBoxStatus.AppendText("Error Column count is [" + reader.FieldCount + "]. It should be 15.\r\n");
                 return false;
             }
 
             List<string> FieldNameList = new List<string>();
-            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR", "Points", "Comments" };
+            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "Hide", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR", "Points", "Comments" };
             for (int j = 0; j < reader.FieldCount; j++)
             {
                 if (reader.GetName(j) != FieldNameList[j])
@@ -870,6 +884,7 @@ namespace TestingPolSourceGrouping
             string Group = "";
             string Choice = "";
             string Child = "";
+            string Hide = "";
             string EN = "";
             string InitEN = "";
             string DescEN = "";
@@ -899,6 +914,7 @@ namespace TestingPolSourceGrouping
                     Group = "";
                     Choice = "";
                     Child = "";
+                    Hide = "";
                     EN = "";
                     InitEN = "";
                     DescEN = "";
@@ -924,18 +940,19 @@ namespace TestingPolSourceGrouping
                             Group = TempStr;
                             Choice = "";
                             Child = "";
-                            EN = reader.GetValue(3).ToString();
-                            InitEN = reader.GetValue(4).ToString();
-                            DescEN = reader.GetValue(5).ToString();
-                            ReportEN = reader.GetValue(6).ToString();
-                            TextEN = reader.GetValue(7).ToString();
-                            FR = reader.GetValue(8).ToString();
-                            InitFR = reader.GetValue(9).ToString();
-                            DescFR = reader.GetValue(10).ToString();
-                            ReportFR = reader.GetValue(11).ToString();
-                            TextFR = reader.GetValue(12).ToString();
-                            Points = reader.GetValue(13).ToString();
-                            Comments = reader.GetValue(14).ToString();
+                            Hide = "";
+                            EN = reader.GetValue(4).ToString();
+                            InitEN = reader.GetValue(5).ToString();
+                            DescEN = reader.GetValue(6).ToString();
+                            ReportEN = reader.GetValue(7).ToString();
+                            TextEN = reader.GetValue(8).ToString();
+                            FR = reader.GetValue(9).ToString();
+                            InitFR = reader.GetValue(10).ToString();
+                            DescFR = reader.GetValue(11).ToString();
+                            ReportFR = reader.GetValue(12).ToString();
+                            TextFR = reader.GetValue(13).ToString();
+                            Points = reader.GetValue(14).ToString();
+                            Comments = reader.GetValue(15).ToString();
                         }
                         else
                         {
@@ -949,18 +966,26 @@ namespace TestingPolSourceGrouping
                             {
                                 Child = reader.GetValue(2).ToString();
                             }
-                            EN = reader.GetValue(3).ToString();
-                            InitEN = reader.GetValue(4).ToString();
-                            DescEN = reader.GetValue(5).ToString();
-                            ReportEN = reader.GetValue(6).ToString();
-                            TextEN = reader.GetValue(7).ToString();
-                            FR = reader.GetValue(8).ToString();
-                            InitFR = reader.GetValue(9).ToString();
-                            DescFR = reader.GetValue(10).ToString();
-                            ReportFR = reader.GetValue(11).ToString();
-                            TextFR = reader.GetValue(12).ToString();
-                            Points = reader.GetValue(13).ToString();
-                            Comments = reader.GetValue(14).ToString();
+                            if (reader.GetValue(3).GetType() == typeof(DBNull) || string.IsNullOrEmpty(reader.GetValue(3).ToString()))
+                            {
+                                Hide = "";
+                            }
+                            else
+                            {
+                                Hide = reader.GetValue(3).ToString();
+                            }
+                            EN = reader.GetValue(4).ToString();
+                            InitEN = reader.GetValue(5).ToString();
+                            DescEN = reader.GetValue(6).ToString();
+                            ReportEN = reader.GetValue(7).ToString();
+                            TextEN = reader.GetValue(8).ToString();
+                            FR = reader.GetValue(9).ToString();
+                            InitFR = reader.GetValue(10).ToString();
+                            DescFR = reader.GetValue(11).ToString();
+                            ReportFR = reader.GetValue(12).ToString();
+                            TextFR = reader.GetValue(13).ToString();
+                            Points = reader.GetValue(14).ToString();
+                            Comments = reader.GetValue(15).ToString();
                         }
 
                         groupChoiceChildLevelList.Add(new GroupChoiceChildLevel()
@@ -969,6 +994,7 @@ namespace TestingPolSourceGrouping
                             Group = Group,
                             Choice = Choice,
                             Child = Child,
+                            Hide = Hide,
                             EN = EN,
                             InitEN = InitEN,
                             DescEN = DescEN,
@@ -1057,6 +1083,7 @@ namespace TestingPolSourceGrouping
             public string Group { get; set; }
             public string Choice { get; set; }
             public string Child { get; set; }
+            public string Hide { get; set; }
             public string EN { get; set; }
             public string InitEN { get; set; }
             public string DescEN { get; set; }
