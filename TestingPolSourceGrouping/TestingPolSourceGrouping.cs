@@ -1403,6 +1403,28 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"            }");
             sb.AppendLine(@"        }");
 
+            // Creating GetEnumText_PolSourceObsInfoHideEnum(PolSourceObsInfoEnum? polSourceInfo)
+            sb.AppendLine(@"        public string GetEnumText_PolSourceObsInfoHideEnum(PolSourceObsInfoEnum? polSourceInfo)");
+            sb.AppendLine(@"        {");
+            sb.AppendLine(@"            if (polSourceInfo == null)");
+            sb.AppendLine(@"                return BaseEnumServiceRes.Empty;");
+            sb.AppendLine(@"");
+            sb.AppendLine(@"            switch (polSourceInfo)");
+            sb.AppendLine(@"            {");
+            sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
+            sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
+
+            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.InitEN != "").Distinct().ToList())
+            {
+                sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
+                sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide;");
+            }
+
+            sb.AppendLine(@"                default:");
+            sb.AppendLine(@"                    return """";");
+            sb.AppendLine(@"            }");
+            sb.AppendLine(@"        }");
+
             sb.AppendLine(@"        #endregion Functions Get Enum Text");
 
             sb.AppendLine(@"    }");
