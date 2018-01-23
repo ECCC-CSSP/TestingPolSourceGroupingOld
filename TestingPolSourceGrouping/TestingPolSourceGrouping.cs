@@ -132,6 +132,10 @@ namespace TestingPolSourceGrouping
                     {
                         sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Text\t" + groupChoiceChildLevel.TextEN);
                     }
+                    if (groupChoiceChildLevel.DescEN.Length > 0)
+                    {
+                        sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Desc\t" + groupChoiceChildLevel.DescEN);
+                    }
                 }
             }
 
@@ -168,6 +172,10 @@ namespace TestingPolSourceGrouping
                     if (groupChoiceChildLevel.TextFR.Length > 0)
                     {
                         sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Text\t" + groupChoiceChildLevel.TextFR);
+                    }
+                    if (groupChoiceChildLevel.DescFR.Length > 0)
+                    {
+                        sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Desc\t" + groupChoiceChildLevel.DescFR);
                     }
                 }
             }
@@ -1330,6 +1338,12 @@ namespace TestingPolSourceGrouping
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Group + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Group + "Desc;");
+            }
+
+            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.DescEN != "").Distinct().ToList())
+            {
+                sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
+                sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Desc;");
             }
 
             sb.AppendLine(@"                default:");
