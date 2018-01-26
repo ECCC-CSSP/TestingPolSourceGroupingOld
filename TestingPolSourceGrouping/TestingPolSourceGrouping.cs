@@ -1428,7 +1428,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
             sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.InitEN != "").Distinct().ToList())
+            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.Hide != "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide;");
