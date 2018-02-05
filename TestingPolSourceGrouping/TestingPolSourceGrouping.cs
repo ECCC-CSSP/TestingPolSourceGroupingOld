@@ -20,9 +20,7 @@ namespace TestingPolSourceGrouping
         string Lang = "EN";
         List<Label> labelGroupList = new List<Label>();
         List<ComboBox> comboBoxList = new List<ComboBox>();
-        List<Label> labelDescList = new List<Label>();
         List<Label> labelReportList = new List<Label>();
-        List<Label> labelTextList = new List<Label>();
         #endregion Variables
 
         #region Constructors
@@ -90,16 +88,12 @@ namespace TestingPolSourceGrouping
             if (Lang == "FR")
             {
                 labelGroupList[0].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.FR + ")";
-                labelDescList[0].Text = "DescFR: " + groupChoiceChildLevelGroup.DescFR;
                 labelReportList[0].Text = "ReportFR: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportFR;
-                labelTextList[0].Text = "TextFR: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).TextFR + " --- InitFR: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).InitFR;
             }
             else
             {
                 labelGroupList[0].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.EN + ")";
-                labelDescList[0].Text = "DescEN: " + groupChoiceChildLevelGroup.DescEN;
                 labelReportList[0].Text = "ReportEN: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportEN;
-                labelTextList[0].Text = "TextEN: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).TextEN + " --- InitEN: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).InitEN;
             }
         }
         private void butPolSourceInfoEnumResEN_Click(object sender, EventArgs e)
@@ -122,7 +116,6 @@ namespace TestingPolSourceGrouping
                 {
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "\t" + groupChoiceChildLevel.EN);
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Init\t" + (groupChoiceChildLevel.InitEN + " ").Trim());
-                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Points\t" + (groupChoiceChildLevel.Points + " ").Trim());
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (groupChoiceChildLevel.Hide + " ").Trim());
                     if (groupChoiceChildLevel.ReportEN.Length > 0)
                     {
@@ -163,7 +156,6 @@ namespace TestingPolSourceGrouping
                 {
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "\t" + groupChoiceChildLevel.FR);
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Init\t" + (groupChoiceChildLevel.InitFR + " ").Trim());
-                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Points\t" + (groupChoiceChildLevel.Points + " ").Trim());
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (groupChoiceChildLevel.Hide + " ").Trim());
                     if (groupChoiceChildLevel.ReportFR.Length > 0)
                     {
@@ -220,15 +212,11 @@ namespace TestingPolSourceGrouping
             labelGroupList[senderID].Text = groupChoiceChildLevelSelected.Group;
             if (Lang == "FR")
             {
-                labelDescList[senderID].Text = "DescFR: " + groupChoiceChildLevelSelected.DescFR;
                 labelReportList[senderID].Text = "ReportFR: " + groupChoiceChildLevelSelected.ReportFR;
-                labelTextList[senderID].Text = "TextFR: " + groupChoiceChildLevelSelected.TextFR + " --- InitFR: " + groupChoiceChildLevelSelected.InitFR;
             }
             else
             {
-                labelDescList[senderID].Text = "DescEN: " + groupChoiceChildLevelSelected.DescEN;
                 labelReportList[senderID].Text = "ReportEN: " + groupChoiceChildLevelSelected.ReportEN;
-                labelTextList[senderID].Text = "TextEN: " + groupChoiceChildLevelSelected.TextEN + " --- InitEN: " + groupChoiceChildLevelSelected.InitEN;
             }
 
             GroupChoiceChildLevel groupChoiceChildLevel = (from c in groupChoiceChildLevelList
@@ -241,9 +229,7 @@ namespace TestingPolSourceGrouping
                 comboBoxList[i].SelectedIndex = -1;
                 comboBoxList[i].Text = "";
                 labelGroupList[i].Text = "";
-                labelDescList[i].Text = "";
                 labelReportList[i].Text = "";
-                labelTextList[i].Text = "";
             }
 
             if (groupChoiceChildLevel != null)
@@ -269,16 +255,12 @@ namespace TestingPolSourceGrouping
                     if (Lang == "FR")
                     {
                         labelGroupList[senderID + 1].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.FR + ")";
-                        labelDescList[senderID + 1].Text = "DescFR: " + groupChoiceChildLevelGroup.DescFR;
                         labelReportList[senderID + 1].Text = "ReportFR: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).ReportFR;
-                        labelTextList[senderID + 1].Text = "TextFR: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).TextFR + " --- InitFR: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).InitFR;
                     }
                     else
                     {
                         labelGroupList[senderID + 1].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.EN + ")";
-                        labelDescList[senderID + 1].Text = "DescEN: " + groupChoiceChildLevelGroup.DescEN;
                         labelReportList[senderID + 1].Text = "ReportEN: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).ReportEN;
-                        labelTextList[senderID + 1].Text = "TextEN: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).TextEN + " --- InitEN: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).InitEN;
                     }
                 }
                 else
@@ -286,12 +268,10 @@ namespace TestingPolSourceGrouping
                     if (Lang == "FR")
                     {
                         labelGroupList[senderID + 1].Text = groupChoiceChildLevel.Group + " (" + groupChoiceChildLevel.FR + ")";
-                        labelDescList[senderID + 1].Text = "DescFR: " + groupChoiceChildLevel.DescFR;
                     }
                     else
                     {
                         labelGroupList[senderID + 1].Text = groupChoiceChildLevel.Group + " (" + groupChoiceChildLevel.EN + ")";
-                        labelDescList[senderID + 1].Text = "DescEN: " + groupChoiceChildLevel.DescEN;
                     }
                 }
             }
@@ -472,7 +452,7 @@ namespace TestingPolSourceGrouping
 
 
             List<string> FieldNameList = new List<string>();
-            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "Hide", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR", "Points", "Comments" };
+            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "Hide", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR" };
             for (int j = 0; j < reader.FieldCount; j++)
             {
                 if (reader.GetName(j) != FieldNameList[j])
@@ -500,8 +480,6 @@ namespace TestingPolSourceGrouping
             string DescFR = "";
             string ReportFR = "";
             string TextFR = "";
-            string Points = "";
-            string Comments = "";
 
             int CountRead = 0;
             while (reader.Read())
@@ -529,8 +507,6 @@ namespace TestingPolSourceGrouping
                     DescFR = "";
                     ReportFR = "";
                     TextFR = "";
-                    Points = "";
-                    Comments = "";
                     continue;
                 }
                 else
@@ -549,8 +525,6 @@ namespace TestingPolSourceGrouping
                     DescFR = reader.GetValue(11).ToString();
                     ReportFR = reader.GetValue(12).ToString();
                     TextFR = reader.GetValue(13).ToString();
-                    Points = reader.GetValue(14).ToString();
-                    Comments = reader.GetValue(15).ToString();
                 }
                 groupChoiceChildLevelStraitList.Add(new GroupChoiceChildLevel()
                 {
@@ -569,8 +543,6 @@ namespace TestingPolSourceGrouping
                     DescFR = DescFR,
                     ReportFR = ReportFR,
                     TextFR = TextFR,
-                    Points = Points,
-                    Comments = Comments,
                 });
             }
             reader.Close();
@@ -708,12 +680,12 @@ namespace TestingPolSourceGrouping
         }
         private void DrawForm()
         {
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < 30; i++)
             {
                 Label label = new Label()
                 {
                     AutoSize = true,
-                    Location = new System.Drawing.Point((i < 7 ? 10 : (i < 14 ? 480 : 940)), (i < 7 ? (i) * 85 + 3 : (i < 14 ? (i - 7) * 85 + 3 : (i - 14) * 85 + 3))),
+                    Location = new System.Drawing.Point((i < 10 ? 10 : (i < 20 ? 480 : 940)), (i < 10 ? (i) * 55 + 3 : (i < 20 ? (i - 10) * 55 + 3 : (i - 20) * 55 + 3))),
                     Name = "lblGroup_" + i.ToString(),
                     Font = new Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
                     Size = new Size(51, 16),
@@ -724,27 +696,12 @@ namespace TestingPolSourceGrouping
                 labelGroupList.Add(label);
                 panel4.Controls.Add(label);
             }
-            for (int i = 0; i < 21; i++)
-            {
-                Label label = new Label()
-                {
-                    AutoSize = true,
-                    Location = new System.Drawing.Point((i < 7 ? 10 : (i < 14 ? 480 : 940)), (i < 7 ? (i) * 85 + 20 : (i < 14 ? (i - 7) * 85 + 20 : (i - 14) * 85 + 20))),
-                    Name = "lblDesc_" + i.ToString(),
-                    Size = new System.Drawing.Size(41, 13),
-                    TabIndex = 2003 + i,
-                    Text = "",
-                };
-
-                labelDescList.Add(label);
-                panel4.Controls.Add(label);
-            }
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < 30; i++)
             {
                 ComboBox comboBox = new ComboBox()
                 {
                     FormattingEnabled = true,
-                    Location = new System.Drawing.Point((i < 7 ? 10 : (i < 14 ? 480 : 940)), (i < 7 ? (i) * 85 + 36 : (i < 14 ? (i - 7) * 85 + 36 : (i - 14) * 85 + 36))),
+                    Location = new System.Drawing.Point((i < 10 ? 30 : (i < 20 ? 500 : 960)), (i < 10 ? (i) * 55 + 20 : (i < 20 ? (i - 10) * 55 + 20 : (i - 20) * 55 + 20))),
                     Name = "comboBoxChild_" + i.ToString(),
                     Size = new System.Drawing.Size(302, 21),
                     TabIndex = 699 + i,
@@ -754,12 +711,12 @@ namespace TestingPolSourceGrouping
                 comboBoxList.Add(comboBox);
                 panel4.Controls.Add(comboBox);
             }
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < 30; i++)
             {
                 Label label = new Label()
                 {
                     AutoSize = true,
-                    Location = new System.Drawing.Point((i < 7 ? 10 : (i < 14 ? 480 : 940)), (i < 7 ? (i) * 85 + 56 : (i < 14 ? (i - 7) * 85 + 56 : (i - 14) * 85 + 56))),
+                    Location = new System.Drawing.Point((i < 10 ? 30 : (i < 20 ? 500 : 960)), (i < 10 ? (i) * 55 + 40 : (i < 20 ? (i - 10) * 55 + 40 : (i - 20) * 55 + 40))),
                     Name = "lblReport_" + i.ToString(),
                     Size = new System.Drawing.Size(41, 13),
                     TabIndex = 20033 + i,
@@ -767,21 +724,6 @@ namespace TestingPolSourceGrouping
                 };
 
                 labelReportList.Add(label);
-                panel4.Controls.Add(label);
-            }
-            for (int i = 0; i < 21; i++)
-            {
-                Label label = new Label()
-                {
-                    AutoSize = true,
-                    Location = new System.Drawing.Point((i < 7 ? 10 : (i < 14 ? 480 : 940)), (i < 7 ? (i) * 85 + 69 : (i < 14 ? (i - 7) * 85 + 69 : (i - 14) * 85 + 69))),
-                    Name = "lblText_" + i.ToString(),
-                    Size = new System.Drawing.Size(41, 13),
-                    TabIndex = 20035 + i,
-                    Text = "",
-                };
-
-                labelTextList.Add(label);
                 panel4.Controls.Add(label);
             }
         }
@@ -868,14 +810,14 @@ namespace TestingPolSourceGrouping
                 return false;
             }
 
-            if (reader.FieldCount != 16)
+            if (reader.FieldCount != 14)
             {
-                richTextBoxStatus.AppendText("Error Column count is [" + reader.FieldCount + "]. It should be 15.\r\n");
+                richTextBoxStatus.AppendText("Error Column count is [" + reader.FieldCount + "]. It should be 14.\r\n");
                 return false;
             }
 
             List<string> FieldNameList = new List<string>();
-            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "Hide", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR", "Points", "Comments" };
+            FieldNameList = new List<string>() { "CSSPID", "Group", "Child", "Hide", "EN", "InitEN", "DescEN", "ReportEN", "TextEN", "FR", "InitFR", "DescFR", "ReportFR", "TextFR" };
             for (int j = 0; j < reader.FieldCount; j++)
             {
                 if (reader.GetName(j) != FieldNameList[j])
@@ -903,8 +845,6 @@ namespace TestingPolSourceGrouping
             string DescFR = "";
             string ReportFR = "";
             string TextFR = "";
-            string Points = "";
-            string Comments = "";
 
             int CountRead = 0;
             while (reader.Read())
@@ -933,8 +873,6 @@ namespace TestingPolSourceGrouping
                     DescFR = "";
                     ReportFR = "";
                     TextFR = "";
-                    Points = "";
-                    Comments = "";
                     continue;
                 }
                 else
@@ -959,8 +897,6 @@ namespace TestingPolSourceGrouping
                             DescFR = reader.GetValue(11).ToString();
                             ReportFR = reader.GetValue(12).ToString();
                             TextFR = reader.GetValue(13).ToString();
-                            Points = reader.GetValue(14).ToString();
-                            Comments = reader.GetValue(15).ToString();
                         }
                         else
                         {
@@ -992,8 +928,6 @@ namespace TestingPolSourceGrouping
                             DescFR = reader.GetValue(11).ToString();
                             ReportFR = reader.GetValue(12).ToString();
                             TextFR = reader.GetValue(13).ToString();
-                            Points = reader.GetValue(14).ToString();
-                            Comments = reader.GetValue(15).ToString();
                         }
 
                         groupChoiceChildLevelList.Add(new GroupChoiceChildLevel()
@@ -1013,8 +947,6 @@ namespace TestingPolSourceGrouping
                             DescFR = DescFR,
                             ReportFR = ReportFR,
                             TextFR = TextFR,
-                            Points = Points,
-                            Comments = Comments,
                         });
                     }
                 }
@@ -1102,8 +1034,6 @@ namespace TestingPolSourceGrouping
             public string DescFR { get; set; }
             public string ReportFR { get; set; }
             public string TextFR { get; set; }
-            public string Points { get; set; }
-            public string Comments { get; set; }
         }
 
         #endregion Class
