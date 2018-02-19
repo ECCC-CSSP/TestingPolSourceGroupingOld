@@ -15,6 +15,7 @@ namespace TestingPolSourceGrouping
     public partial class TestingPolSourceGrouping : Form
     {
         #region Variables
+        List<string> startWithList = new List<string>() { "101", "143", "910" };
         List<GroupChoiceChildLevel> groupChoiceChildLevelList = new List<GroupChoiceChildLevel>();
         int TotalCount = 0;
         string Lang = "EN";
@@ -1000,15 +1001,55 @@ namespace TestingPolSourceGrouping
                 sbGroup.Append(" (" + i.ToString() + ") " + groupChoiceChildLevel.Group);
                 if (Lang == "FR")
                 {
-                    sbGroupText.Append(" (" + i.ToString() + ") " + groupChoiceChildLevel.FR.Trim());
+                    if (groupChoiceChildLevel.FR.IndexOf("|") > 0)
+                    {
+                        sbGroupText.Append(" (" + i.ToString() + ") " + groupChoiceChildLevel.FR.Substring(0, groupChoiceChildLevel.FR.IndexOf("|")).Trim());
+                    }
+                    else
+                    {
+                        sbGroupText.Append(" (" + i.ToString() + ") " + groupChoiceChildLevel.FR.Trim());
+                    }
                     sbSentence.Append(groupChoiceChildLevel.ReportFR);
-                    sbTVText.Append(groupChoiceChildLevel.TextFR);
+                    string StartCSSPID = groupChoiceChildLevel.CSSPID.ToString().Substring(0, 3);
+                    string groupTxt = groupChoiceChildLevel.FR.Trim();
+
+                    if (startWithList.Where(c => c.StartsWith(StartCSSPID)).Any())
+                    {
+                        if (groupTxt.IndexOf("|") > 0)
+                        {
+                            sbTVText.Append((sbTVText.Length == 10 ? "" : ", ") + groupTxt.Substring(0, groupTxt.IndexOf("|")).Trim());
+                        }
+                        else
+                        {
+                            sbTVText.Append((sbTVText.Length == 10 ? "" : ", ") + groupTxt.Trim());
+                        }
+                    }
                 }
                 else
                 {
-                    sbGroupText.Append(" (" + i.ToString() + ") " + groupChoiceChildLevel.EN.Trim());
+                    if (groupChoiceChildLevel.EN.IndexOf("|") > 0)
+                    {
+                        sbGroupText.Append(" (" + i.ToString() + ") " + groupChoiceChildLevel.EN.Substring(0, groupChoiceChildLevel.EN.IndexOf("|")).Trim());
+                    }
+                    else
+                    {
+                        sbGroupText.Append(" (" + i.ToString() + ") " + groupChoiceChildLevel.EN.Trim());
+                    }
                     sbSentence.Append(groupChoiceChildLevel.ReportEN);
-                    sbTVText.Append(groupChoiceChildLevel.TextEN);
+                    string StartCSSPID = groupChoiceChildLevel.CSSPID.ToString().Substring(0, 3);
+                    string groupTxt = groupChoiceChildLevel.EN.Trim();
+
+                    if (startWithList.Where(c => c.StartsWith(StartCSSPID)).Any())
+                    {
+                        if (groupTxt.IndexOf("|") > 0)
+                        {
+                            sbTVText.Append((sbTVText.Length == 10 ? "" : ", ") + groupTxt.Substring(0, groupTxt.IndexOf("|")).Trim());
+                        }
+                        else
+                        {
+                            sbTVText.Append((sbTVText.Length == 10 ? "" : ", ") + groupTxt.Trim());
+                        }
+                    }
                 }
 
             }
