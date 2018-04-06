@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PolSourceGroupingExcelReader;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,49 +17,133 @@ namespace TestingPolSourceGrouping
     {
         #region Variables
         List<string> startWithList = new List<string>() { "101", "143", "910" };
-        List<GroupChoiceChildLevel> groupChoiceChildLevelList = new List<GroupChoiceChildLevel>();
+        //List<GroupChoiceChildLevel> groupChoiceChildLevelList = new List<GroupChoiceChildLevel>();
         int TotalCount = 0;
         string Lang = "EN";
         List<Label> labelGroupList = new List<Label>();
         List<ComboBox> comboBoxList = new List<ComboBox>();
         List<Label> labelReportList = new List<Label>();
+        PolSourceGroupingExcelFileRead polSourceGroupingExcelFileRead { get; set; }
         #endregion Variables
 
         #region Constructors
         public TestingPolSourceGrouping()
         {
             InitializeComponent();
+            polSourceGroupingExcelFileRead = new PolSourceGroupingExcelFileRead();
+            polSourceGroupingExcelFileRead.Status += PolSourceGroupingExcelFileRead_Status;
+            polSourceGroupingExcelFileRead.Error += PolSourceGroupingExcelFileRead_Error;
             DrawForm();
         }
 
         #endregion Constructors
 
         #region Events
+        private void PolSourceGroupingExcelFileRead_Error(object sender, PolSourceGroupingExcelFileRead.ErrorEventArgs e)
+        {
+            richTextBoxStatus.AppendText(e.error + "\r\n");
+            richTextBoxStatus.Refresh();
+            Application.DoEvents();
+        }
+
+        private void PolSourceGroupingExcelFileRead_Status(object sender, PolSourceGroupingExcelFileRead.StatusEventArgs e)
+        {
+            lblStatus.Text = e.status;
+            lblStatus.Refresh();
+            Application.DoEvents();
+        }
         private void butLoadExcelSheet_Click(object sender, EventArgs e)
         {
+            LoadExcelSheet(true);
+
+            //ChangeLang();
+
+            //if (!ReadExcelFile())
+            //    return;
+
+            //if (!CheckSpreadsheet())
+            //    return;
+
+            //foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            //{
+            //    groupChoiceChildLevel.ID = int.Parse(groupChoiceChildLevel.CSSPID);
+            //}
+
+            //richTextBoxStatus.Text = "";
+            //lblStatus.Text = "Excel doc read completed ... ";
+            //lblStatus.Refresh();
+            //Application.DoEvents();
+
+            //List<GroupChoiceChildLevel> groupChoiceChildLevelChildList = null;
+
+            //if (Lang == "FR")
+            //{
+            //    groupChoiceChildLevelChildList = (from c in groupChoiceChildLevelList
+            //                                      where c.ID > 10100
+            //                                      && c.ID < 10199
+            //                                      orderby c.FR
+            //                                      select c).ToList();
+            //}
+            //else
+            //{
+            //    groupChoiceChildLevelChildList = (from c in groupChoiceChildLevelList
+            //                                      where c.ID > 10100
+            //                                      && c.ID < 10199
+            //                                      orderby c.EN
+            //                                      select c).ToList();
+            //}
+
+            //comboBoxList[0].Items.Clear();
+            //foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChildList)
+            //{
+            //    comboBoxList[0].Items.Add(groupChoiceChildLevel);
+            //}
+
+            //comboBoxList[0].SelectedIndex = 0;
+
+            //GroupChoiceChildLevel groupChoiceChildLevelGroup = (from c in groupChoiceChildLevelList
+            //                                                    where c.Group == ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).Group
+            //                                                    select c).FirstOrDefault();
+
+
+            //if (Lang == "FR")
+            //{
+            //    labelGroupList[0].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.FR + ")";
+            //    labelReportList[0].Text = "ReportFR: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportFR;
+            //}
+            //else
+            //{
+            //    labelGroupList[0].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.EN + ")";
+            //    labelReportList[0].Text = "ReportEN: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportEN;
+            //}
+        }
+        private void LoadExcelSheet(bool DoCheck)
+        {
+            richTextBoxStatus.Text = "";
+            lblStatus.Refresh();
+            Application.DoEvents();
+
             ChangeLang();
 
-            if (!ReadExcelFile())
+            if (!polSourceGroupingExcelFileRead.ReadExcelSheet(textBoxFileLocation.Text, DoCheck))
+            {
                 return;
+            }
 
-            if (!CheckSpreadsheet())
-                return;
-
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 groupChoiceChildLevel.ID = int.Parse(groupChoiceChildLevel.CSSPID);
             }
 
-            richTextBoxStatus.Text = "";
             lblStatus.Text = "Excel doc read completed ... ";
             lblStatus.Refresh();
             Application.DoEvents();
 
-            List<GroupChoiceChildLevel> groupChoiceChildLevelChildList = null;
+            List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelChildList = null;
 
             if (Lang == "FR")
             {
-                groupChoiceChildLevelChildList = (from c in groupChoiceChildLevelList
+                groupChoiceChildLevelChildList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                   where c.ID > 10100
                                                   && c.ID < 10199
                                                   orderby c.FR
@@ -66,7 +151,7 @@ namespace TestingPolSourceGrouping
             }
             else
             {
-                groupChoiceChildLevelChildList = (from c in groupChoiceChildLevelList
+                groupChoiceChildLevelChildList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                   where c.ID > 10100
                                                   && c.ID < 10199
                                                   orderby c.EN
@@ -74,50 +159,81 @@ namespace TestingPolSourceGrouping
             }
 
             comboBoxList[0].Items.Clear();
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChildList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChildList)
             {
+                groupChoiceChildLevel.FR = groupChoiceChildLevel.FR.Trim();
+                groupChoiceChildLevel.EN = groupChoiceChildLevel.EN.Trim();
+
                 comboBoxList[0].Items.Add(groupChoiceChildLevel);
             }
 
             comboBoxList[0].SelectedIndex = 0;
 
-            GroupChoiceChildLevel groupChoiceChildLevelGroup = (from c in groupChoiceChildLevelList
-                                                                where c.Group == ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).Group
-                                                                select c).FirstOrDefault();
-
+            PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevelGroup = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
+                                                                                               where c.Group == ((PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[0].SelectedItem).Group
+                                                                                               select c).FirstOrDefault();
 
             if (Lang == "FR")
             {
                 labelGroupList[0].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.FR + ")";
-                labelReportList[0].Text = "ReportFR: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportFR;
+                labelReportList[0].Text = ((PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportFR;
             }
             else
             {
                 labelGroupList[0].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.EN + ")";
-                labelReportList[0].Text = "ReportEN: " + ((GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportEN;
+                labelReportList[0].Text = ((PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[0].SelectedItem).ReportEN;
             }
+
+            butShowReportText.Visible = true;
         }
+
         private void butPolSourceInfoEnumResEN_Click(object sender, EventArgs e)
         {
             ShowStart();
 
-            if (groupChoiceChildLevelList.Count == 0)
+            if (polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Count == 0)
                 return;
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Group + "\t" + groupChoiceChildLevel.EN);
                 sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Group + "Desc\t" + groupChoiceChildLevel.DescEN);
             }
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 if (groupChoiceChildLevel.Choice.Length > 0)
                 {
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "\t" + groupChoiceChildLevel.EN);
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Init\t" + (groupChoiceChildLevel.InitEN + " ").Trim());
-                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (groupChoiceChildLevel.Hide + " ").Trim());
+
+                    List<string> HideList = new List<string>();
+                    List<string> HideTextList = groupChoiceChildLevel.Hide.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
+                    foreach (string hide in HideTextList)
+                    {
+                        int fromCSSPID = -1;
+                        int toCSSPID = -1;
+                        if (hide.Contains("-"))
+                        {
+                            List<string> stringList = hide.Split("-".ToCharArray(), StringSplitOptions.None).ToList();
+
+                            fromCSSPID = int.Parse(hide.Substring(0, hide.IndexOf("-")));
+                            int endPos = hide.IndexOf("-") + 1;
+                            toCSSPID = int.Parse(hide.Substring(endPos));
+
+                            for (int id = fromCSSPID; id <= toCSSPID; id++)
+                            {
+                                HideList.Add(id.ToString());
+                            }
+                        }
+                        else
+                        {
+                            HideList.Add(hide);
+                        }
+                    }
+
+                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (string.Join(",", HideList) + " ").Trim());
                     if (groupChoiceChildLevel.ReportEN.Length > 0)
                     {
                         sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Report\t" + groupChoiceChildLevel.ReportEN);
@@ -141,23 +257,48 @@ namespace TestingPolSourceGrouping
         {
             ShowStart();
 
-            if (groupChoiceChildLevelList.Count == 0)
+            if (polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Count == 0)
                 return;
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Group + "\t" + groupChoiceChildLevel.FR);
                 sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Group + "Desc\t" + groupChoiceChildLevel.DescFR);
             }
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 if (groupChoiceChildLevel.Choice.Length > 0)
                 {
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "\t" + groupChoiceChildLevel.FR);
                     sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Init\t" + (groupChoiceChildLevel.InitFR + " ").Trim());
-                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (groupChoiceChildLevel.Hide + " ").Trim());
+                    List<string> HideList = new List<string>();
+                    List<string> HideTextList = groupChoiceChildLevel.Hide.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
+                    foreach (string hide in HideTextList)
+                    {
+                        int fromCSSPID = -1;
+                        int toCSSPID = -1;
+                        if (hide.Contains("-"))
+                        {
+                            List<string> stringList = hide.Split("-".ToCharArray(), StringSplitOptions.None).ToList();
+
+                            fromCSSPID = int.Parse(hide.Substring(0, hide.IndexOf("-")));
+                            int endPos = hide.IndexOf("-") + 1;
+                            toCSSPID = int.Parse(hide.Substring(endPos));
+
+                            for (int id = fromCSSPID; id <= toCSSPID; id++)
+                            {
+                                HideList.Add(id.ToString());
+                            }
+                        }
+                        else
+                        {
+                            HideList.Add(hide);
+                        }
+                    }
+
+                    sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide\t" + (string.Join(",", HideList) + " ").Trim());
                     if (groupChoiceChildLevel.ReportFR.Length > 0)
                     {
                         sb.AppendLine(@"PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Report\t" + groupChoiceChildLevel.ReportFR);
@@ -182,7 +323,7 @@ namespace TestingPolSourceGrouping
         {
             ShowStart();
 
-            if (groupChoiceChildLevelList.Count == 0)
+            if (polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Count == 0)
                 return;
 
             TotalCount = 0;
@@ -208,7 +349,7 @@ namespace TestingPolSourceGrouping
         {
             string senderStr = ((ComboBox)sender).Name;
             int senderID = int.Parse(senderStr.Substring(senderStr.IndexOf("_") + 1));
-            GroupChoiceChildLevel groupChoiceChildLevelSelected = (GroupChoiceChildLevel)((ComboBox)sender).SelectedItem;
+            PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevelSelected = (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)((ComboBox)sender).SelectedItem;
 
             labelGroupList[senderID].Text = groupChoiceChildLevelSelected.Group;
             if (Lang == "FR")
@@ -220,7 +361,7 @@ namespace TestingPolSourceGrouping
                 labelReportList[senderID].Text = "ReportEN: " + groupChoiceChildLevelSelected.ReportEN;
             }
 
-            GroupChoiceChildLevel groupChoiceChildLevel = (from c in groupChoiceChildLevelList
+            PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                            where c.Group == groupChoiceChildLevelSelected.Child
                                                            select c).FirstOrDefault();
 
@@ -236,32 +377,32 @@ namespace TestingPolSourceGrouping
             if (groupChoiceChildLevel != null)
             {
                 int EndNumber = groupChoiceChildLevel.ID + 99;
-                List<GroupChoiceChildLevel> groupChoiceChildLevelChildList = (from c in groupChoiceChildLevelList
+                List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelChildList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                                               where c.ID > groupChoiceChildLevel.ID
                                                                               && c.ID < EndNumber
                                                                               select c).ToList();
 
                 if (groupChoiceChildLevelChildList.Count > 0)
                 {
-                    foreach (GroupChoiceChildLevel groupChoiceChildLevelChild in groupChoiceChildLevelChildList)
+                    foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevelChild in groupChoiceChildLevelChildList)
                     {
                         comboBoxList[senderID + 1].Items.Add(groupChoiceChildLevelChild);
                     }
 
                     comboBoxList[senderID + 1].SelectedIndex = 0;
 
-                    GroupChoiceChildLevel groupChoiceChildLevelGroup = (from c in groupChoiceChildLevelList
-                                                                        where c.Group == ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).Group
+                    PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevelGroup = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
+                                                                        where c.Group == ((PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).Group
                                                                         select c).FirstOrDefault();
                     if (Lang == "FR")
                     {
                         labelGroupList[senderID + 1].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.FR + ")";
-                        labelReportList[senderID + 1].Text = "ReportFR: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).ReportFR;
+                        labelReportList[senderID + 1].Text = "ReportFR: " + ((PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).ReportFR;
                     }
                     else
                     {
                         labelGroupList[senderID + 1].Text = groupChoiceChildLevelGroup.Group + " (" + groupChoiceChildLevelGroup.EN + ")";
-                        labelReportList[senderID + 1].Text = "ReportEN: " + ((GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).ReportEN;
+                        labelReportList[senderID + 1].Text = "ReportEN: " + ((PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[senderID + 1].SelectedItem).ReportEN;
                     }
                 }
                 else
@@ -301,17 +442,17 @@ namespace TestingPolSourceGrouping
         {
             ShowStart();
 
-            if (groupChoiceChildLevelList.Count == 0)
+            if (polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Count == 0)
                 return false;
 
             // Checking child exist
-            List<string> childList = (from c in groupChoiceChildLevelList
+            List<string> childList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                       where c.Child.Length > 0
                                       select c.Child).Distinct().ToList();
 
             foreach (string child in childList)
             {
-                GroupChoiceChildLevel groupChoiceChildLevelExist = (from c in groupChoiceChildLevelList
+                PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevelExist = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                                     where c.Group == child
                                                                     select c).FirstOrDefault();
 
@@ -325,11 +466,11 @@ namespace TestingPolSourceGrouping
             richTextBoxStatus.AppendText("All Child do exist on Column Group\r\n\r\n");
 
             // Checking EN and FR text exist for Group ending with Start
-            List<GroupChoiceChildLevel> groupChoiceChildLevelGroupList = (from c in groupChoiceChildLevelList
+            List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelGroupList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                                           where c.Group.Substring(c.Group.Length - 5) == "Start"
                                                                           select c).Distinct().ToList();
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelGroupList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelGroupList)
             {
                 if (string.IsNullOrWhiteSpace(groupChoiceChildLevel.EN))
                 {
@@ -348,11 +489,11 @@ namespace TestingPolSourceGrouping
             richTextBoxStatus.AppendText("Each Group with ending name = 'Start' does have EN and FR text.\r\n\r\n");
 
             // Checking DescEN and DescFR text exist for Group ending with Start
-            List<GroupChoiceChildLevel> groupChoiceChildLevelGroupDescList = (from c in groupChoiceChildLevelList
+            List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelGroupDescList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                                               where c.Group.Substring(c.Group.Length - 5) == "Start"
                                                                               select c).Distinct().ToList();
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelGroupDescList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelGroupDescList)
             {
                 if (string.IsNullOrWhiteSpace(groupChoiceChildLevel.Choice))
                 {
@@ -375,11 +516,11 @@ namespace TestingPolSourceGrouping
 
 
             // Checking EN and FR text exist for Choice.Length > 0
-            List<GroupChoiceChildLevel> groupChoiceChildLevelChoiceList = (from c in groupChoiceChildLevelList
+            List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelChoiceList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                                            where c.Choice.Length > 0
                                                                            select c).Distinct().ToList();
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChoiceList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChoiceList)
             {
                 if (string.IsNullOrWhiteSpace(groupChoiceChildLevel.EN))
                 {
@@ -398,11 +539,11 @@ namespace TestingPolSourceGrouping
             richTextBoxStatus.AppendText("Each Choice does have EN and FR text.\r\n\r\n");
 
             // Checking ReportEN and ReportFR text exist for Child.Length > 0
-            groupChoiceChildLevelChoiceList = (from c in groupChoiceChildLevelList
+            groupChoiceChildLevelChoiceList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                                where c.Child.Length > 0
                                                select c).Distinct().ToList();
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChoiceList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChoiceList)
             {
                 if (string.IsNullOrWhiteSpace(groupChoiceChildLevel.ReportEN) && groupChoiceChildLevel.ReportEN.Length == 0)
                 {
@@ -681,15 +822,16 @@ namespace TestingPolSourceGrouping
         }
         private void DrawForm()
         {
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 40; i++)
             {
+                Point point = new System.Drawing.Point((i < 10 ? 10 : (i < 20 ? 360 : (i < 30 ? 710 : 1060))), (i < 10 ? (i) * 60 + 3 : (i < 20 ? (i - 10) * 60 + 3 : (i < 30 ? (i - 20) * 60 + 3 : (i - 30) * 60 + 3))));
                 Label label = new Label()
                 {
                     AutoSize = true,
-                    Location = new System.Drawing.Point((i < 10 ? 10 : (i < 20 ? 480 : 940)), (i < 10 ? (i) * 55 + 3 : (i < 20 ? (i - 10) * 55 + 3 : (i - 20) * 55 + 3))),
+                    Location = point,
                     Name = "lblGroup_" + i.ToString(),
-                    Font = new Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
-                    Size = new Size(51, 16),
+                    Font = new Font("Microsoft Sans Serif", 8.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                    Size = new Size(51, 12),
                     TabIndex = 200 + i,
                     Text = "",
                 };
@@ -697,14 +839,14 @@ namespace TestingPolSourceGrouping
                 labelGroupList.Add(label);
                 panel4.Controls.Add(label);
             }
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 40; i++)
             {
+                Point point = new System.Drawing.Point((i < 10 ? 30 : (i < 20 ? 380 : (i < 30 ? 730 : 1090))), (i < 10 ? (i) * 60 + 25 : (i < 20 ? (i - 10) * 60 + 25 : (i < 30 ? (i - 20) * 60 + 25 : (i - 30) * 60 + 25))));
                 ComboBox comboBox = new ComboBox()
                 {
-                    FormattingEnabled = true,
-                    Location = new System.Drawing.Point((i < 10 ? 30 : (i < 20 ? 500 : 960)), (i < 10 ? (i) * 55 + 20 : (i < 20 ? (i - 10) * 55 + 20 : (i - 20) * 55 + 20))),
+                    Location = point,
                     Name = "comboBoxChild_" + i.ToString(),
-                    Size = new System.Drawing.Size(302, 21),
+                    Size = new System.Drawing.Size(200, 50),
                     TabIndex = 699 + i,
                 };
 
@@ -712,14 +854,14 @@ namespace TestingPolSourceGrouping
                 comboBoxList.Add(comboBox);
                 panel4.Controls.Add(comboBox);
             }
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 40; i++)
             {
+                Point point = new System.Drawing.Point((i < 10 ? 30 : (i < 20 ? 380 : (i < 30 ? 730 : 1090))), (i < 10 ? (i) * 60 + 48 : (i < 20 ? (i - 10) * 60 + 48 : (i < 30 ? (i - 20) * 60 + 48 : (i - 30) * 60 + 48))));
                 Label label = new Label()
                 {
                     AutoSize = true,
-                    Location = new System.Drawing.Point((i < 10 ? 30 : (i < 20 ? 500 : 960)), (i < 10 ? (i) * 55 + 40 : (i < 20 ? (i - 10) * 55 + 40 : (i - 20) * 55 + 40))),
+                    Location = point,
                     Name = "lblReport_" + i.ToString(),
-                    Size = new System.Drawing.Size(41, 13),
                     TabIndex = 20033 + i,
                     Text = "",
                 };
@@ -761,7 +903,7 @@ namespace TestingPolSourceGrouping
             textList.Add(s);
 
 
-            List<GroupChoiceChildLevel> groupChoiceChildLevelChildList = groupChoiceChildLevelList.Where(c => c.Group == s && c.Choice != "").ToList();
+            List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelChildList = polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group == s && c.Choice != "").ToList();
             if (groupChoiceChildLevelChildList.Count > 0)
             {
                 foreach (string child in groupChoiceChildLevelChildList.Select(c => c.Child).Distinct())
@@ -774,7 +916,7 @@ namespace TestingPolSourceGrouping
         }
         private bool ReadExcelFile()
         {
-            groupChoiceChildLevelList = new List<GroupChoiceChildLevel>();
+            polSourceGroupingExcelFileRead.groupChoiceChildLevelList = new List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel>();
             lblStatus.Text = "Reading spreadsheet ...";
             lblStatus.Refresh();
             Application.DoEvents();
@@ -931,7 +1073,7 @@ namespace TestingPolSourceGrouping
                             TextFR = reader.GetValue(13).ToString();
                         }
 
-                        groupChoiceChildLevelList.Add(new GroupChoiceChildLevel()
+                        polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Add(new PolSourceGroupingExcelFileRead.GroupChoiceChildLevel()
                         {
                             CSSPID = CSSPID,
                             Group = Group,
@@ -990,7 +1132,7 @@ namespace TestingPolSourceGrouping
             for (int i = 0, count = labelGroupList.Count; i < count; i++)
             {
 
-                GroupChoiceChildLevel groupChoiceChildLevel = (GroupChoiceChildLevel)comboBoxList[i].SelectedItem;
+                PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel = (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[i].SelectedItem;
 
                 if (groupChoiceChildLevel == null)
                 {
@@ -1095,7 +1237,7 @@ namespace TestingPolSourceGrouping
         }
         public void GenerateAllCodeFiles()
         {
-            if (groupChoiceChildLevelList.Count == 0)
+            if (polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Count == 0)
                 return;
 
             TotalCount = 0;
@@ -1122,7 +1264,7 @@ namespace TestingPolSourceGrouping
 
             FileInfo fi = new FileInfo(@"C:\CSSP Latest Code Old\CSSPModelsDLL\CSSPModelsDLL\Services\GeneratedBaseModelService.cs");
 
-            List<string> groupList = (from c in groupChoiceChildLevelList
+            List<string> groupList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                       select c.Group).Distinct().ToList();
 
             sb.AppendLine(@"using CSSPModelsDLL.Models;");
@@ -1153,7 +1295,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"        public void FillPolSourceObsInfoChild(List<PolSourceObsInfoChild> polSourceObsInfoChildList)");
             sb.AppendLine(@"        {");
             sb.AppendLine(@"            polSourceObsInfoChildList.Clear();");
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"            polSourceObsInfoChildList.Add(new PolSourceObsInfoChild()");
                 sb.AppendLine(@"            {");
@@ -1161,7 +1303,7 @@ namespace TestingPolSourceGrouping
                 sb.AppendLine(@"                PolSourceObsInfoChildStart = PolSourceObsInfoEnum." + groupChoiceChildLevel.Group.ToString() + ",");
                 sb.AppendLine(@"            });");
             }
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Child != ""))
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Child != ""))
             {
                 sb.AppendLine(@"            polSourceObsInfoChildList.Add(new PolSourceObsInfoChild()");
                 sb.AppendLine(@"            {");
@@ -1187,7 +1329,7 @@ namespace TestingPolSourceGrouping
 
             FileInfo fi = new FileInfo(@"C:\CSSP Latest Code Old\CSSPEnumsDLL\CSSPEnumsDLL\Services\GeneratedBaseEnumServicePolSourceInfo.cs");
 
-            List<string> groupList = (from c in groupChoiceChildLevelList
+            List<string> groupList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                       select c.Group).Distinct().ToList();
 
             sb.AppendLine(@"using CSSPEnumsDLL.Enums;");
@@ -1215,11 +1357,11 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                {");
             sb.AppendLine(@"                    case PolSourceObsInfoEnum.Error:");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"                    case PolSourceObsInfoEnum." + groupChoiceChildLevel.Group + ":");
             }
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 if (groupChoiceChildLevel.Choice.Length > 0)
                 {
@@ -1242,11 +1384,11 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"            {");
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Group + ":");
             }
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 if (groupChoiceChildLevel.Choice.Length > 0)
                 {
@@ -1275,12 +1417,12 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
             sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Group + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Group + ";");
             }
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 if (groupChoiceChildLevel.Choice.Length > 0)
                 {
@@ -1305,13 +1447,13 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
             sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Group + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Group + "Desc;");
             }
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.DescEN != "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Choice != "" && c.DescEN != "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Desc;");
@@ -1333,7 +1475,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
             sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.ReportEN != "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Choice != "" && c.ReportEN != "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Report;");
@@ -1355,7 +1497,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
             sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.TextEN != "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Choice != "" && c.TextEN != "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Text;");
@@ -1377,7 +1519,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
             sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.InitEN != "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Choice != "" && c.InitEN != "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Init;");
@@ -1399,7 +1541,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                case PolSourceObsInfoEnum.Error:");
             sb.AppendLine(@"                    return BaseEnumServiceRes.Empty;");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Choice != "" && c.Hide != "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Choice != "" && c.Hide != "").Distinct().ToList())
             {
                 sb.AppendLine(@"                case PolSourceObsInfoEnum." + groupChoiceChildLevel.Choice + ":");
                 sb.AppendLine(@"                    return PolSourceInfoEnumRes.PolSourceInfoEnum" + groupChoiceChildLevel.Choice + "Hide;");
@@ -1429,7 +1571,7 @@ namespace TestingPolSourceGrouping
 
             FileInfo fi = new FileInfo(@"C:\CSSP Latest Code Old\CSSPEnumsDLL\CSSPEnumsDLL\Enums\GeneratedPolSourceObsInfoEnum.cs");
 
-            List<string> groupList = (from c in groupChoiceChildLevelList
+            List<string> groupList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                       select c.Group).Distinct().ToList();
 
             sb.AppendLine(@"using System;");
@@ -1444,7 +1586,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"    {");
             sb.AppendLine(@"        Error = 0,");
 
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 if (!string.IsNullOrWhiteSpace(groupChoiceChildLevel.Group))
                 {
@@ -1474,7 +1616,7 @@ namespace TestingPolSourceGrouping
 
             FileInfo fi = new FileInfo(@"C:\CSSP Latest Code Old\CSSPEnumsDLL\CSSPEnumsDLL.Tests\Services\GeneratedBaseEnumServicePolSourceObsInfoEnumTest.cs");
 
-            List<string> groupList = (from c in groupChoiceChildLevelList
+            List<string> groupList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
                                       select c.Group).Distinct().ToList();
 
             sb.AppendLine(@"using System;");
@@ -1522,7 +1664,7 @@ namespace TestingPolSourceGrouping
             sb.AppendLine(@"                            Assert.AreEqual(BaseEnumServiceRes.Error, retStr);");
             sb.AppendLine(@"                        }");
             sb.AppendLine(@"                        break;");
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList.Where(c => c.Group.Substring(c.Group.Length - 5) == "Start" && c.Choice == "").Distinct().ToList())
             {
                 sb.AppendLine(@"                        case PolSourceObsInfoEnum." + groupChoiceChildLevel.Group + ":");
                 sb.AppendLine(@"                        {");
@@ -1531,7 +1673,7 @@ namespace TestingPolSourceGrouping
                 sb.AppendLine(@"                        }");
                 sb.AppendLine(@"                        break;");
             }
-            foreach (GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelList)
+            foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in polSourceGroupingExcelFileRead.groupChoiceChildLevelList)
             {
                 if (!string.IsNullOrWhiteSpace(groupChoiceChildLevel.Choice))
                 {

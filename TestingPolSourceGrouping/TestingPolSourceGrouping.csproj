@@ -65,6 +65,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="PolSourceGroupingExcelFileRead">
+      <HintPath>..\..\..\CSSP Code\TestingPolSourceGrouping\PolSourceGroupingExcelFileRead\bin\Debug\PolSourceGroupingExcelFileRead.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
