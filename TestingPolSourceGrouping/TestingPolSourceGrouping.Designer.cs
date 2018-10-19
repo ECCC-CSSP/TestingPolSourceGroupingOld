@@ -258,7 +258,7 @@
             this.textBoxFileLocation.Name = "textBoxFileLocation";
             this.textBoxFileLocation.Size = new System.Drawing.Size(701, 20);
             this.textBoxFileLocation.TabIndex = 1;
-            this.textBoxFileLocation.Text = "C:\\Users\\leblancc\\Desktop\\Pol Source Grouping.xlsm";
+            this.textBoxFileLocation.Text = "C:\\Users\\leblancc\\Desktop\\PolSourceGrouping.xlsm";
             // 
             // richTextBoxStatus
             // 
