@@ -32,20 +32,20 @@ namespace TestingPolSourceGrouping
             InitializeComponent();
             polSourceGroupingExcelFileRead = new PolSourceGroupingExcelFileRead();
             polSourceGroupingExcelFileRead.Status += PolSourceGroupingExcelFileRead_Status;
-            polSourceGroupingExcelFileRead.Error += PolSourceGroupingExcelFileRead_Error;
+            polSourceGroupingExcelFileRead.CSSPError += PolSourceGroupingExcelFileRead_CSSPError;;
             DrawForm();
         }
+
 
         #endregion Constructors
 
         #region Events
-        private void PolSourceGroupingExcelFileRead_Error(object sender, PolSourceGroupingExcelFileRead.ErrorEventArgs e)
+        private void PolSourceGroupingExcelFileRead_CSSPError(object sender, PolSourceGroupingExcelFileRead.CSSPErrorEventArgs e)
         {
-            richTextBoxStatus.AppendText(e.error + "\r\n");
+            richTextBoxStatus.AppendText(e.CSSPError + "\r\n");
             richTextBoxStatus.Refresh();
             Application.DoEvents();
         }
-
         private void PolSourceGroupingExcelFileRead_Status(object sender, PolSourceGroupingExcelFileRead.StatusEventArgs e)
         {
             lblStatus.Text = e.status;

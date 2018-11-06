@@ -65,7 +65,8 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="CSSPPolSourceGroupingExcelFileRead">
+    <Reference Include="CSSPPolSourceGroupingExcelFileRead, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\CSSPCode\CSSPPolSourceGroupingExcelFileRead\CSSPPolSourceGroupingExcelFileRead\bin\Debug\CSSPPolSourceGroupingExcelFileRead.dll</HintPath>
     </Reference>
     <Reference Include="System" />
