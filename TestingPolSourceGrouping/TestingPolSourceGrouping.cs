@@ -32,7 +32,7 @@ namespace TestingPolSourceGrouping
             InitializeComponent();
             polSourceGroupingExcelFileRead = new PolSourceGroupingExcelFileRead();
             polSourceGroupingExcelFileRead.Status += PolSourceGroupingExcelFileRead_Status;
-            polSourceGroupingExcelFileRead.CSSPError += PolSourceGroupingExcelFileRead_CSSPError;;
+            polSourceGroupingExcelFileRead.CSSPError += PolSourceGroupingExcelFileRead_CSSPError; ;
             DrawForm();
         }
 
@@ -397,11 +397,13 @@ namespace TestingPolSourceGrouping
                         }
                     }
 
+                    bool comboboxSelected = false;
                     for (int i = 0, count = comboBoxList[senderID + 1].Items.Count; i < count; i++)
                     {
                         if (!((PolSourceGroupingExcelFileRead.GroupChoiceChildLevel)comboBoxList[senderID + 1].Items[i]).EN.StartsWith("------   "))
                         {
                             comboBoxList[senderID + 1].SelectedIndex = i;
+                            comboboxSelected = true;
                             break;
                         }
                     }
@@ -468,8 +470,8 @@ namespace TestingPolSourceGrouping
             foreach (string child in childList)
             {
                 PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevelExist = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
-                                                                    where c.Group == child
-                                                                    select c).FirstOrDefault();
+                                                                                                   where c.Group == child
+                                                                                                   select c).FirstOrDefault();
 
                 if (groupChoiceChildLevelExist == null)
                 {
@@ -482,8 +484,8 @@ namespace TestingPolSourceGrouping
 
             // Checking EN and FR text exist for Group ending with Start
             List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelGroupList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
-                                                                          where c.Group.Substring(c.Group.Length - 5) == "Start"
-                                                                          select c).Distinct().ToList();
+                                                                                                         where c.Group.Substring(c.Group.Length - 5) == "Start"
+                                                                                                         select c).Distinct().ToList();
 
             foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelGroupList)
             {
@@ -505,8 +507,8 @@ namespace TestingPolSourceGrouping
 
             // Checking DescEN and DescFR text exist for Group ending with Start
             List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelGroupDescList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
-                                                                              where c.Group.Substring(c.Group.Length - 5) == "Start"
-                                                                              select c).Distinct().ToList();
+                                                                                                             where c.Group.Substring(c.Group.Length - 5) == "Start"
+                                                                                                             select c).Distinct().ToList();
 
             foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelGroupDescList)
             {
@@ -532,8 +534,8 @@ namespace TestingPolSourceGrouping
 
             // Checking EN and FR text exist for Choice.Length > 0
             List<PolSourceGroupingExcelFileRead.GroupChoiceChildLevel> groupChoiceChildLevelChoiceList = (from c in polSourceGroupingExcelFileRead.groupChoiceChildLevelList
-                                                                           where c.Choice.Length > 0
-                                                                           select c).Distinct().ToList();
+                                                                                                          where c.Choice.Length > 0
+                                                                                                          select c).Distinct().ToList();
 
             foreach (PolSourceGroupingExcelFileRead.GroupChoiceChildLevel groupChoiceChildLevel in groupChoiceChildLevelChoiceList)
             {
